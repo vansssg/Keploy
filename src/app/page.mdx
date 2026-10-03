@@ -1,0 +1,401 @@
+<Intro
+  kicker="Keploy · Go · run log"
+  title="Recording Go API tests with Keploy, and everything that broke on the way"
+  dek="I ran Keploy's Echo + PostgreSQL quickstart on Windows with WSL. The tests pass now. This is the log of how I got there, including the eight things that went wrong, written for a Go developer who has never used Keploy."
+/>
+
+<RunReceipt />
+
+<Callout type="note" title="In short">
+
+Keploy watches your API while you use it. It saves each request and response as a test, and it saves your app's database answers as mocks. Later it replays the requests and answers the database calls itself. The only Go I edited was one line, the database host. Almost everything that went wrong was in the environment around it, not in the Go code.
+
+</Callout>
+
+<Chapter id="what-is-keploy" kicker="what & why" title="What is Keploy, and why use it?">
+
+Keploy is an open-source tool that writes API tests by watching your app. You run your service, send it real requests, and Keploy saves each request and response as a test. It also saves what your dependencies said back, such as a database, so the test can run later without them.
+
+<WhyGrid />
+
+### Hand-written tests vs Keploy
+
+| | Hand-written | With Keploy |
+| --- | --- | --- |
+| Where tests come from | You write each request and expected response | You use the app and Keploy records them |
+| Dependencies | You build fakes or run the real services | Recorded replies act as mocks |
+| Test files | Test code you maintain | Plain YAML on disk |
+| When behaviour changes | Edit the tests by hand | Record again |
+
+<Callout type="note" title="What is background and what is mine">
+
+This chapter is background, based on how Keploy describes itself. Everything from the setup chapter onward is what I ran and saw myself.
+
+</Callout>
+
+### Who it is for
+
+Go developers with an HTTP API that talks to a database or other services, especially when writing the mocks is the slow part. After one run, my view is that it fits that case well. I have not tried it on anything else.
+
+</Chapter>
+
+<Chapter id="how-it-works" kicker="the idea" title="What Keploy does">
+
+Normally you write a test, then write a fake for every dependency your handler touches. Keploy turns that around. You run the real app, make real requests, and Keploy writes the tests for you.
+
+<FlowSwitch />
+
+While recording, Keploy sits in front of the app and in front of its calls to PostgreSQL. In my terminal it started its own proxy (on port 16789) and an agent. Each HTTP exchange becomes a YAML test. Each database reply becomes a mock. During replay, Keploy re-sends the recorded requests and answers the app's database calls from the mocks.
+
+The quickstart says the app believes it is talking to a real Postgres during replay. I have not tested that with the database switched off, so I will not claim it. It is the first thing on my to-do list at the end.
+
+</Chapter>
+
+<Chapter id="setup" kicker="setup" title="My setup, and the one line of Go I changed">
+
+| Part | Value |
+| --- | --- |
+| App | Echo URL shortener with PostgreSQL (`echo-sql` in `keploy/samples-go`) |
+| OS | Windows with WSL (Ubuntu) |
+| Go | 1.26 (from the runtime paths in the stack traces) |
+| Echo | v4.9.0 |
+| Keploy | 3.8.58, at `/usr/local/bin/keploy` |
+| PostgreSQL | `postgres:10.5` in Docker, container `postgresDb`, port 5432 |
+| App port | 8082, binary named `echo-psql-url-shortener` |
+
+Postgres runs from the sample's compose file. The quickstart starts it with `docker-compose up postgres`. However you start it, make sure it is up and healthy before you record anything. I checked with:
+
+```bash title="check Postgres"
+sudo docker compose ps
+```
+
+<Facts title="docker compose ps: what I looked for" caption="Postgres had to be up and healthy before I recorded anything." items={[{k:"container",v:"postgresDb"},{k:"image",v:"postgres:10.5"},{k:"port",v:"5432"},{k:"state",v:"up and healthy",ok:true}]} />
+
+### Why the host has to change
+
+The sample points at `postgresDb`. That name only resolves inside Docker's network. My Go binary runs in WSL, outside that network, and Postgres publishes port 5432 to the host. So the app has to reach it at `localhost`.
+
+```bash title="edit the database host"
+sudo sed -i 's/host: "postgresDb"/host: "localhost"/' main.go
+grep -n 'host:' main.go
+```
+
+```text title="what grep printed"
+47:             host: "localhost",
+48:             // host: "localhost" when using natively
+49:             //host:     "echo-sql-postgres-1",
+```
+
+<Diff title="main.go, line 47" caption="The only Go I changed." del='host: "postgresDb",' add='host: "localhost",' />
+
+The quickstart and my clone disagreed on where this line is:
+
+| | Quickstart | My clone |
+| --- | --- | --- |
+| Line of the host setting | 41 | 47 |
+| Value the file shipped with | not stated | `postgresDb` |
+
+<Callout type="watch" title="Plain sed failed for me">
+
+My project sits on the Windows drive, mounted in WSL at `/mnt/c`. The first `sed -i` failed with a permissions error and `sudo` fixed it. If you can, clone into your WSL home folder instead. I did not test that, so I can only say it may avoid the problem.
+
+</Callout>
+
+### Build the binary
+
+```bash title="build"
+go build -buildvcs=false -o echo-psql-url-shortener
+ls -l echo-psql-url-shortener
+```
+
+```text title="what ls printed"
+-rwxrwxrwx 1 root root 11436025 Oct  3 10:15 echo-psql-url-shortener
+```
+
+The plain `go build` failed on version-control stamping, so the `-buildvcs=false` flag is not optional on my setup.
+
+</Chapter>
+
+<Chapter id="run-keploy" kicker="run it" title="Getting Keploy to start">
+
+Two small walls stood between me and the first recording. Both are in the troubleshooting log below, and here is the short version.
+
+1. The quickstart's `sudo -E PATH=$PATH keploy record ...` did not work. In WSL your PATH includes Windows folders with spaces, and `sudo` split it in the wrong place. I called Keploy by its full path instead: `/usr/local/bin/keploy`.
+2. Keploy then opened a browser sign-in that timed out after a minute. Its `--manual-login` option got me through.
+
+```bash title="the command that worked"
+sudo /usr/local/bin/keploy record --manual-login -c "./echo-psql-url-shortener"
+```
+
+<Callout type="tip" title="Do not publish the sign-in link">
+
+The one-time URL Keploy prints during sign-in is a credential in practice. Keep it out of screenshots and notes.
+
+</Callout>
+
+</Chapter>
+
+<Chapter id="record" kicker="record" title="Recording real traffic">
+
+<Facts title="keploy record: what started" caption="Keploy recording while the app runs." items={[{k:"Keploy proxy",v:"port 16789"},{k:"Keploy agent",v:"started",ok:true},{k:"your app",v:"echo-psql-url-shortener"},{k:"app port",v:"8082"}]} />
+
+With the app running under `keploy record`, I sent two requests from another terminal. First, create a short link:
+
+```bash title="create"
+curl -X POST http://localhost:8082/url -H "Content-Type: application/json" -d '{"url":"https://google.com"}'
+```
+
+The response contained the short link `http://localhost:8082/Lhr4BWAi`.
+
+<Exchange title="POST /url" caption="Creating a short link." req='POST /url  {"url":"https://google.com"}' res="short link http://localhost:8082/Lhr4BWAi" />
+
+Then follow it:
+
+```bash title="follow the short link"
+curl -i http://localhost:8082/Lhr4BWAi
+```
+
+```text title="trimmed output"
+HTTP/1.1 308 Permanent Redirect
+...
+Location: https://google.com
+```
+
+A 308, not the 302 many people expect. Keploy saved this follow-up request as a test too.
+
+<Exchange title="GET /Lhr4BWAi" caption="The redirect." req="GET /Lhr4BWAi" res="308 Permanent Redirect" note="Location: https://google.com" />
+
+### What Keploy wrote to disk
+
+```text title="keploy/ (from a find, not ls -R)"
+keploy/test-set-1/tests/get-lhr4bwai-1.yaml
+keploy/test-set-1/tests/post-url-2.yaml
+keploy/test-set-2/tests/post-url-1.yaml
+keploy/test-set-3/tests/get-lhr4bwai-1.yaml
+keploy/test-set-3/tests/post-url-1.yaml
+```
+
+It looks like each recording gets its own `test-set-N` folder, and each test is named after its method and path plus a counter. Each file is plain YAML, so you can read it and edit it.
+
+The quickstart says a separate mocks file holds the recorded Postgres outputs. I did not open my mocks file for this write-up, so I will not describe its contents.
+
+<FileTree title="keploy/" caption="Each recording became its own test set." sets={{"test-set-1":["get-lhr4bwai-1.yaml","post-url-2.yaml"],"test-set-2":["post-url-1.yaml"],"test-set-3":["get-lhr4bwai-1.yaml","post-url-1.yaml"]}} />
+
+</Chapter>
+
+<Chapter id="replay" kicker="replay" title="Replaying: one crash, one clean run">
+
+My first replay crashed before it ran a single test. Switch between the two runs to compare them.
+
+<ReplaySwitch labels={["Replay every set", "Replay chosen sets"]}>
+
+```text title="keploy test, with no set chosen (trimmed)"
+Test Sets to be Replayed {"testSets": ["test-set-0", "test-set-1"]}
+ERROR failed to unmarshal a mock yaml doc of unknown type {"type": "Postgres"}
+... (repeated)
+ERROR failed to mock the outgoing message ...
+  "error": "replayer: session RecordedIndex missing PostgresV3Session mock — cannot reply to StartupMessage"
+{"level":"error",...,"msg":"Ping failed","error":"EOF"...}
+{"level":"fatal",...,"msg":"Failed to establish connection to local PostgreSQL instance:","error":"EOF"...}
+ERROR `keploy test` failed mid-run.
+```
+
+```text title="test-run-3, after choosing the sets (trimmed)"
+TESTRUN SUMMARY. For test-set: "test-set-1"
+        Total tests:        2
+        Total test passed:  2
+        Total test failed:  0
+        Time Taken:         "5.29 s"
+...
+COMPLETE TESTRUN SUMMARY.
+      Total tests: 3
+      Total test passed: 3
+      Total test failed: 0
+      Total time taken: "10.41 s"
+
+      Test Suite Name         Total Test      Passed          Failed          Time Taken
+
+      "test-set-1"            2               2               0               "5.29 s"
+      "test-set-2"            1               1               0               "5.12 s"
+```
+
+</ReplaySwitch>
+
+Look at who was talking in the crash. The app asked Postgres for a connection, and the answer came from Keploy's replayer, which had no matching mock. So Keploy really is standing in for the database during replay. The cause was an older test set, `test-set-0`, recorded in a mock format this Keploy version could not read. Keploy replays every set it finds in the folder, and one stale set was enough to stop a clean run.
+
+<Callout type="tip" title="Choose your test sets">
+
+Run `keploy test --help` and look for the option that selects test sets. Replay only the ones you trust.
+
+</Callout>
+
+### The banner that said everything was fine
+
+After the crash, Keploy printed a block addressed to an AI agent that called the run `verified_green` and said all 3 tests had passed. The run had just failed. I treated that block as text, not as instructions, and read the per-set `TESTRUN SUMMARY` instead. That is the number to trust.
+
+### The final run
+
+The last replay I did was `test-run-4`, on `test-set-3`: 2 tests, 2 passed, 0 failed, in 15.23 seconds.
+
+<Facts title="test-run-4 summary" caption="The last replay, on test-set-3." items={[{k:"tests",v:"2"},{k:"passed",v:"2",ok:true},{k:"failed",v:"0"},{k:"time",v:"15.23 s"}]} />
+
+<ReportLinks />
+
+<Callout type="watch" title="A green tick can replay an error">
+
+In one earlier run Keploy warned that a passing test, `post-url-1`, had been recorded against a 500 response and passed by reproducing it. A pass only says the app behaved the same as when it was recorded. Open the YAML and check the recorded `status_code` before you trust the result.
+
+</Callout>
+
+</Chapter>
+
+<Chapter id="breakage" kicker="what broke" title="Everything that broke, in order">
+
+Eight problems, each with the exact message, the cause as far as I know it, and the fix. Filter by stage, and open any row.
+
+<ProblemList>
+
+<Problem id="sed" stage="setup" title="sed refuses to edit main.go">
+
+```text
+sed: preserving permissions for ‘./sedFnMbUD’: Operation not permitted
+```
+
+My project is on the Windows drive (`/mnt/c`), and I believe that is why `sed -i` could not keep the file's permissions. Running it with `sudo` worked:
+
+```bash
+sudo sed -i 's/host: "postgresDb"/host: "localhost"/' main.go
+```
+
+</Problem>
+
+<Problem id="vcs" stage="build" title="go build fails on VCS stamping">
+
+```text
+error obtaining VCS status: exit status 128
+        Use -buildvcs=false to disable VCS stamping.
+```
+
+Go tried to stamp version-control information into the binary and could not read the repository status. Turn the stamping off:
+
+```bash
+go build -buildvcs=false -o echo-psql-url-shortener
+```
+
+</Problem>
+
+<Problem id="sudo-path" stage="keploy" title="sudo -E PATH=$PATH breaks in WSL">
+
+```text
+sudo: preserving the entire environment is not supported, '-E' is ignored
+sudo: 'Files/WindowsApps/MicrosoftCorporationII...:/mnt/c/Program': command not found
+```
+
+WSL copies the Windows PATH into Linux, and that PATH contains folders with spaces. Unquoted, it was split at the first space and `sudo` tried to run the fragment as a command. Also, this `sudo` ignores `-E`. Find Keploy and call it by its full path:
+
+```bash
+which keploy
+sudo /usr/local/bin/keploy record -c "./echo-psql-url-shortener"
+```
+
+</Problem>
+
+<Problem id="signin" stage="keploy" title="Keploy sign-in times out">
+
+```text
+Error: authentication timed out after 1 minute; last polling error: unexpected status 401: {"error":"invalid or expired code"}
+```
+
+The browser sign-in did not complete in time. The manual login option worked:
+
+```bash
+sudo /usr/local/bin/keploy record --manual-login -c "./echo-psql-url-shortener"
+```
+
+Do not publish the sign-in URL Keploy prints.
+
+</Problem>
+
+<Problem id="postgres-137" stage="setup" title="Postgres died and the app returned 500s">
+
+The Postgres container exited with code 137, the app started returning HTTP 500, and one recording captured a 500. Exit code 137 means the process was killed, and I did not track down why. I did not save the terminal output for this one.
+
+I restarted Postgres and waited until it was healthy before recording again. The later app logs showed what a healthy start looks like:
+
+```text
+"msg":"Ping successful"
+"msg":"Table creation check passed"
+"msg":"Database connection established successfully"
+```
+
+</Problem>
+
+<Problem id="stale-set" stage="replay" title="Replay crashes on test-set-0">
+
+```text
+ERROR failed to unmarshal a mock yaml doc of unknown type {"type": "Postgres"}
+"error": "replayer: session RecordedIndex missing PostgresV3Session mock — cannot reply to StartupMessage"
+Failed to establish connection to local PostgreSQL instance: ... EOF
+ERROR `keploy test` failed mid-run.
+```
+
+`test-set-0` held mocks in an older `Postgres` format, and this Keploy version works with `PostgresV3`. Keploy replays every set it finds, so the whole run died. Replay only the sets you intend to.
+
+</Problem>
+
+<Problem id="banner" stage="replay" title="The summary banner says green after a failure">
+
+After the crashed replay, a closing block printed `verified_green` and reported that all 3 tests passed, with a note that one pass replayed a recorded 500. It contradicted the run above it.
+
+Read the per-set `TESTRUN SUMMARY` and the individual `"passed"` lines, not the closing banner.
+
+</Problem>
+
+<Problem id="stderr" stage="replay" title="sync /dev/stderr: invalid argument at exit">
+
+```text
+"error":"sync /dev/stderr: invalid argument"
+```
+
+This showed up after runs that had already passed. It looks like the app's logger failing to flush when it shuts down, not a test failure. The test summary printed just before it was green.
+
+</Problem>
+
+</ProblemList>
+
+</Chapter>
+
+<Chapter id="lessons" kicker="lessons" title="What the run taught me">
+
+1. **Where the app runs decides how it finds its database.** `postgresDb` worked inside Docker and failed outside it. `localhost` was right for a binary running in WSL.
+2. **Keep environment failures apart from test failures.** Until Postgres was healthy and the binary built, no result meant anything.
+3. **Know which test sets will be replayed.** One stale set stopped a run that was otherwise fine.
+4. **Read the per-test lines.** A closing summary can disagree with the detail above it.
+5. **A pass is only as good as the recording.** A test recorded against an error replays the error and still passes.
+
+<Reflections />
+
+</Chapter>
+
+<Chapter id="docs-notes" kicker="docs notes" title="Notes for the Keploy docs">
+
+Small things I tripped on, in case they help the next reader.
+
+- **The line number.** The quickstart says to edit the host on line 41. In my clone it is on line 47.
+- **The `sudo -E PATH=$PATH` command.** It broke on WSL because the Windows PATH has spaces. A note about calling the binary by its full path would have saved me time.
+- **The wording in the native section.** It opens by saying the app runs in Docker, right before telling you to use `localhost` because the app runs natively.
+- **Sign-in.** The quickstart does not mention that `keploy record` may ask you to sign in.
+- **Stale test sets.** A line explaining that replay runs every test set it finds would have explained my first crash.
+- **Compose command.** The quickstart uses the older `docker-compose`. I used `docker compose`.
+
+</Chapter>
+
+<Chapter id="next" kicker="next" title="What I have not tested yet">
+
+- **Replay with the database switched off.** This is the real test of the idea at the top of the page. Stop the container, confirm it is gone with `docker ps`, and replay.
+- **A deliberate regression.** Change something small in the redirect handler, rebuild, and watch a test fail, then revert it.
+- **More endpoints.** My tests cover one POST and one GET. A not-found code, a PUT and a DELETE are still unrecorded.
+
+If you want to try the quickstart yourself, it is at [keploy.io/docs/quickstart/samples-echo](https://keploy.io/docs/quickstart/samples-echo/).
+
+</Chapter>
