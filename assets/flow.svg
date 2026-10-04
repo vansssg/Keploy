@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="t d" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
+<title id="t">How Keploy records and replays</title>
+<desc id="d">In record mode requests flow from curl through Keploy to the Echo app and on to PostgreSQL. In replay mode Keploy sends the recorded requests to the app and answers its database calls from recorded mocks.</desc>
+<rect width="1200" height="520" rx="18" fill="#f6f9fb" stroke="#d9e2e9"/>
+<text x="40" y="92" font-size="18" font-weight="700" fill="#0b7f9e">RECORD  ·  you use the app, Keploy watches</text>
+<g><rect x="40.0" y="110" width="210" height="86" rx="14" fill="#ffffff" stroke="#c5d3dd" stroke-width="2"/>
+<text x="145.0" y="149.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">You (curl)</text>
+<text x="145.0" y="175.0" text-anchor="middle" font-size="15" fill="#566879">sends real requests</text></g>
+<g><rect x="343.3333333333333" y="110" width="210" height="86" rx="14" fill="#e2f4f9" stroke="#0b7f9e" stroke-width="2"/>
+<text x="448.3333333333333" y="149.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">Keploy</text>
+<text x="448.3333333333333" y="175.0" text-anchor="middle" font-size="15" fill="#566879">watches the traffic</text></g>
+<g><rect x="646.6666666666666" y="110" width="210" height="86" rx="14" fill="#ffffff" stroke="#c5d3dd" stroke-width="2"/>
+<text x="751.6666666666666" y="149.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">Echo app</text>
+<text x="751.6666666666666" y="175.0" text-anchor="middle" font-size="15" fill="#566879">your Go code, unchanged</text></g>
+<g><rect x="950.0" y="110" width="210" height="86" rx="14" fill="#ffffff" stroke="#c5d3dd" stroke-width="2"/>
+<text x="1055.0" y="149.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">PostgreSQL</text>
+<text x="1055.0" y="175.0" text-anchor="middle" font-size="15" fill="#566879">the real database</text></g>
+<path id="p110_0" d="M250.0 153.0 L343.3333333333333 153.0" stroke="#0b7f9e" stroke-width="3" stroke-dasharray="6 8" fill="none"><animate attributeName="stroke-dashoffset" values="28;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="341.3333333333333,153.0 329.3333333333333,146.0 329.3333333333333,160.0" fill="#0b7f9e"/>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="0.0s" repeatCount="indefinite"><mpath href="#p110_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="0.0s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="1.0s" repeatCount="indefinite"><mpath href="#p110_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="1.0s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="2.0s" repeatCount="indefinite"><mpath href="#p110_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="2.0s" repeatCount="indefinite"/></circle>
+<path id="p110_1" d="M553.3333333333333 153.0 L646.6666666666666 153.0" stroke="#0b7f9e" stroke-width="3" stroke-dasharray="6 8" fill="none"><animate attributeName="stroke-dashoffset" values="28;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="644.6666666666666,153.0 632.6666666666666,146.0 632.6666666666666,160.0" fill="#0b7f9e"/>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="0.5s" repeatCount="indefinite"><mpath href="#p110_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="0.5s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="1.5s" repeatCount="indefinite"><mpath href="#p110_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="1.5s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="2.5s" repeatCount="indefinite"><mpath href="#p110_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="2.5s" repeatCount="indefinite"/></circle>
+<path id="p110_2" d="M856.6666666666666 153.0 L950.0 153.0" stroke="#0b7f9e" stroke-width="3" stroke-dasharray="6 8" fill="none"><animate attributeName="stroke-dashoffset" values="28;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="948.0,153.0 936.0,146.0 936.0,160.0" fill="#0b7f9e"/>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="1.0s" repeatCount="indefinite"><mpath href="#p110_2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="1.0s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="2.0s" repeatCount="indefinite"><mpath href="#p110_2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="2.0s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#0b7f9e"><animateMotion dur="3s" begin="3.0s" repeatCount="indefinite"><mpath href="#p110_2"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="3.0s" repeatCount="indefinite"/></circle>
+
+<text x="40" y="262" font-size="16" fill="#566879">Every API call becomes a test case. Every database query becomes a mock. Both are saved to the keploy/ folder.</text>
+<line x1="40" y1="290" x2="1160" y2="290" stroke="#d9e2e9"/>
+<text x="40" y="332" font-size="18" font-weight="700" fill="#5a3fd0">REPLAY  ·  Keploy plays it back and compares</text>
+<g><rect x="40.0" y="350" width="210" height="86" rx="14" fill="#e2f4f9" stroke="#0b7f9e" stroke-width="2"/>
+<text x="145.0" y="389.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">Keploy</text>
+<text x="145.0" y="415.0" text-anchor="middle" font-size="15" fill="#566879">sends recorded requests</text></g>
+<g><rect x="495.0" y="350" width="210" height="86" rx="14" fill="#ffffff" stroke="#c5d3dd" stroke-width="2"/>
+<text x="600.0" y="389.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">Echo app</text>
+<text x="600.0" y="415.0" text-anchor="middle" font-size="15" fill="#566879">your Go code, unchanged</text></g>
+<g><rect x="950.0" y="350" width="210" height="86" rx="14" fill="#e2f4f9" stroke="#0b7f9e" stroke-width="2"/>
+<text x="1055.0" y="389.0" text-anchor="middle" font-size="22" font-weight="700" fill="#122230">Keploy mocks</text>
+<text x="1055.0" y="415.0" text-anchor="middle" font-size="15" fill="#566879">stand in for Postgres</text></g>
+<path id="p350_0" d="M250.0 393.0 L495.0 393.0" stroke="#5a3fd0" stroke-width="3" stroke-dasharray="6 8" fill="none"><animate attributeName="stroke-dashoffset" values="28;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="493.0,393.0 481.0,386.0 481.0,400.0" fill="#5a3fd0"/>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="0.3s" repeatCount="indefinite"><mpath href="#p350_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="0.3s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="1.3s" repeatCount="indefinite"><mpath href="#p350_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="1.3s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="2.3s" repeatCount="indefinite"><mpath href="#p350_0"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="2.3s" repeatCount="indefinite"/></circle>
+<path id="p350_1" d="M705.0 393.0 L950.0 393.0" stroke="#5a3fd0" stroke-width="3" stroke-dasharray="6 8" fill="none"><animate attributeName="stroke-dashoffset" values="28;0" dur="1.2s" repeatCount="indefinite"/></path>
+<polygon points="948.0,393.0 936.0,386.0 936.0,400.0" fill="#5a3fd0"/>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="0.8s" repeatCount="indefinite"><mpath href="#p350_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="0.8s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="1.8s" repeatCount="indefinite"><mpath href="#p350_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="1.8s" repeatCount="indefinite"/></circle>
+<circle r="6" opacity="0" fill="#5a3fd0"><animateMotion dur="3s" begin="2.8s" repeatCount="indefinite"><mpath href="#p350_1"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin="2.8s" repeatCount="indefinite"/></circle>
+
+<text x="40" y="482" font-size="16" fill="#566879">Each real response is compared with the recorded one. A match is a pass, a difference is a failure.</text>
+</svg>

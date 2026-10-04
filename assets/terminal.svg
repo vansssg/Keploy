@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430" role="img" aria-labelledby="t d">
+<title id="t">The run, typed out</title>
+<desc id="d">An animated terminal: build the Go binary, record with Keploy, send a request, replay, and see 2 passed and 0 failed.</desc>
+<defs><clipPath id="k0"><rect x="62" y="80" width="0" height="22"><animate attributeName="width" values="0;0;432.40000000000003;432.40000000000003;0" keyTimes="0;0.0227;0.1182;0.93;1" dur="22.0s" repeatCount="indefinite"/></rect></clipPath>
+<clipPath id="k1"><rect x="62" y="110" width="0" height="22"><animate attributeName="width" values="0;0;667.6;667.6;0" keyTimes="0;0.1455;0.3000;0.93;1" dur="22.0s" repeatCount="indefinite"/></rect></clipPath>
+<clipPath id="k3"><rect x="62" y="170" width="0" height="22"><animate attributeName="width" values="0;0;550.0;550.0;0" keyTimes="0;0.3636;0.4909;0.93;1" dur="22.0s" repeatCount="indefinite"/></rect></clipPath>
+<clipPath id="k5"><rect x="62" y="230" width="0" height="22"><animate attributeName="width" values="0;0;617.2;617.2;0" keyTimes="0;0.5545;0.6909;0.93;1" dur="22.0s" repeatCount="indefinite"/></rect></clipPath>
+</defs>
+<rect width="1000" height="430" rx="14" fill="#0b141d"/>
+<rect width="1000" height="40" rx="14" fill="#14212d"/><rect y="26" width="1000" height="14" fill="#14212d"/>
+<circle cx="24" cy="20" r="6.5" fill="#ff5f56"/><circle cx="46" cy="20" r="6.5" fill="#ffbd2e"/><circle cx="68" cy="20" r="6.5" fill="#27c93f"/>
+<text x="500.0" y="25" text-anchor="middle" font-family="'Segoe UI',Arial,sans-serif" font-size="13" fill="#93a6b6">ubuntu (WSL)  ~/samples-go/echo-sql</text>
+<g font-family="'Courier New',Consolas,monospace">
+<text x="40" y="96" font-size="14" fill="#46c8e8">$</text><text x="62" y="96" font-size="14" fill="#e6eef4" textLength="428.40000000000003" lengthAdjust="spacing" clip-path="url(#k0)" xml:space="preserve">go build -buildvcs=false -o echo-psql-url-shortener</text>
+<text x="40" y="126" font-size="14" fill="#46c8e8">$</text><text x="62" y="126" font-size="14" fill="#e6eef4" textLength="663.6" lengthAdjust="spacing" clip-path="url(#k1)" xml:space="preserve">sudo /usr/local/bin/keploy record --manual-login -c "./echo-psql-url-shortener"</text>
+<text x="62" y="156" font-size="14" font-weight="400" fill="#93a6b6" opacity="0" xml:space="preserve">http server started on [::]:8082<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3182;0.3302;0.93;1" dur="22.0s" repeatCount="indefinite"/></text>
+<text x="40" y="186" font-size="14" fill="#46c8e8">$</text><text x="62" y="186" font-size="14" fill="#e6eef4" textLength="546.0" lengthAdjust="spacing" clip-path="url(#k3)" xml:space="preserve">curl -X POST localhost:8082/url -d '{"url":"https://google.com"}'</text>
+<text x="62" y="216" font-size="14" font-weight="400" fill="#93a6b6" opacity="0" xml:space="preserve">{ "url": "http://localhost:8082/Lhr4BWAi" }<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.5091;0.5211;0.93;1" dur="22.0s" repeatCount="indefinite"/></text>
+<text x="40" y="246" font-size="14" fill="#46c8e8">$</text><text x="62" y="246" font-size="14" fill="#e6eef4" textLength="613.2" lengthAdjust="spacing" clip-path="url(#k5)" xml:space="preserve">sudo /usr/local/bin/keploy test -c "./echo-psql-url-shortener" --delay 10</text>
+<text x="62" y="276" font-size="14" font-weight="400" fill="#93a6b6" opacity="0" xml:space="preserve">post-url-1        passed<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.7364;0.7484;0.93;1" dur="22.0s" repeatCount="indefinite"/></text>
+<text x="62" y="306" font-size="14" font-weight="400" fill="#93a6b6" opacity="0" xml:space="preserve">get-lhr4bwai-1    passed<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.7636;0.7756;0.93;1" dur="22.0s" repeatCount="indefinite"/></text>
+<text x="62" y="336" font-size="14" font-weight="700" fill="#7ce3a6" opacity="0" xml:space="preserve">2 passed   0 failed   15.23 s<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.8000;0.8120;0.93;1" dur="22.0s" repeatCount="indefinite"/></text>
+
+<rect x="40" y="352" width="9" height="18" fill="#46c8e8"><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect>
+</g>
+</svg>
