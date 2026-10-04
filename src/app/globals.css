@@ -41,10 +41,11 @@
   --cyan-soft: rgba(6, 182, 212, 0.12);
   --cyan-border: rgba(6, 182, 212, 0.3);
 
-  --code-bg: #0d1117;
-  --code-header: #161b22;
-  --code-border: #30363d;
-  --code-ink: #e6edf3;
+  --code-bg: #f6f8fa;
+  --code-header: #eef1f4;
+  --code-border: #d0d7de;
+  --code-ink: #1f2328;
+  --code-muted: #57606a;
 }
 
 .dark {
@@ -91,6 +92,7 @@
   --code-header: #161b22;
   --code-border: #21262d;
   --code-ink: #e6edf3;
+  --code-muted: #8b949e;
 }
 
 @theme inline {
@@ -338,6 +340,21 @@ body {
   color: var(--accent);
   border-color: var(--accent-border);
   background: var(--accent-soft);
+}
+
+.topbar .search-trigger {
+  display: none;
+}
+.topbar .mobile-search {
+  display: inline-flex;
+}
+@media (min-width: 768px) {
+  .topbar .search-trigger {
+    display: flex;
+  }
+  .topbar .mobile-search {
+    display: none;
+  }
 }
 
 /* ----------------- Documentation Layout ----------------- */
@@ -753,7 +770,7 @@ body {
   border-bottom: 1px solid var(--code-border);
   font-family: var(--font-mono);
   font-size: 0.74rem;
-  color: #8b949e;
+  color: var(--code-muted);
 }
 .win .dots {
   display: flex;
@@ -781,7 +798,7 @@ body {
   padding: 0.6rem 1.15rem;
   border-top: 1px solid var(--code-border);
   font-size: 0.8rem;
-  color: #8b949e;
+  color: var(--code-muted);
   font-family: var(--font-sans);
   background: rgba(0, 0, 0, 0.2);
 }
@@ -807,7 +824,7 @@ body {
 .kv b {
   font-weight: 600;
   font-size: 0.86rem;
-  color: #e6edf3;
+  color: var(--code-ink);
 }
 .kv b.pass {
   color: var(--pass);
@@ -872,7 +889,7 @@ figcaption[data-rehype-pretty-code-title] {
   border-bottom: 1px solid var(--code-border);
   font-family: var(--font-mono);
   font-size: 0.74rem;
-  color: #8b949e;
+  color: var(--code-muted);
   padding-right: 5.5rem;
 }
 figure pre {
@@ -905,7 +922,7 @@ figure [data-line] {
   padding: 0.3rem 0.6rem;
   border: 1px solid var(--code-border);
   background: var(--code-header);
-  color: #8b949e;
+  color: var(--code-muted);
   border-radius: 7px;
   cursor: pointer;
   transition: all 0.15s ease;

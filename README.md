@@ -29,8 +29,10 @@ src/
     globals.css       design tokens (light + dark) and styles
   components/
     server.tsx        Intro, Chapter, Callout, WhyGrid, Facts, Exchange, Diff, FileTree, ...
-    client.tsx        TopBar, ThemeToggle, code Pre + copy, RunReceipt, FlowSwitch,
-                      ReplaySwitch, ProblemList / Problem
+    client.tsx        TopBar, ThemeToggle, navigation, and app shell
+    client/
+      tutorial.tsx    code Pre + copy, RunReceipt, FlowSwitch, ReplaySwitch
+      problems.tsx    ProblemList and Problem
   lib/
     site.ts           title, author, stack chips, chapters, run numbers, repo URL
     reflections.ts    optional personal reflections (empty entries are hidden)
